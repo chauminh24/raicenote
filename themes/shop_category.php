@@ -450,7 +450,7 @@ $max_price = max($prices);
         </div>
     </div>
 </footer>
-<script src="js/cart.js"></script>
+
 <script src="js/styling.js"></script>
 <script src="js/auth.js"></script>
 
@@ -503,11 +503,20 @@ $max_price = max($prices);
             })
             .then(data => {
                 document.getElementById('product-list').innerHTML = data;
+                attachAddToCartListeners();
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
 
     }
+    document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('add-to-cart')) {
+        console.log('Add to Cart button clicked');
+        console.log('Product ID:', event.target.getAttribute('data-product-id'));
+        // Add any additional logging you want
+    }
+});
 </script>
+<script src="js/cart.js"></script>
 </html>
