@@ -35,7 +35,7 @@ function getToggleText(isActive) {
     switch (currentPage) {
         case 'shop_main.html':
             return isActive ? 'Back' : 'Shop';
-        case 'events.html':
+        case 'event.html':
             return isActive ? 'Exit' : 'Event';
         case 'contact.html':
             return isActive ? 'Close' : 'Contact';

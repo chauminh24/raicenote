@@ -60,36 +60,40 @@ class ProductSlider {
 
     renderProducts() {
         if (!this.track) return;
-    
+
         const productsHtml = this.products.map(product => {
             const imageUrl = product.image_url && product.image_url.trim()
                 ? product.image_url
                 : this.placeholderImage;
-    
+
             return `
             <div class="product-card card">
-                <img 
-                    src="${imageUrl}"
-                    alt="${product.name}"
-                    class="product-image card-img-top"
-                    onerror="this.onerror=null; this.src='${this.placeholderImage}'; this.className+=' placeholder'">
+                <a href="product.php?product_id=${encodeURIComponent(product.id)}">
+                    <img 
+                        src="${imageUrl}"
+                        alt="${product.name}"
+                        class="product-image card-img-top"
+                        onerror="this.onerror=null; this.src='${this.placeholderImage}'; this.className+=' placeholder'">
+                </a>
                 <div class="card-body">
+                <a href="product.php?product_id=${encodeURIComponent(product.id)}" style="color: black">
                     <h3 class="card-title">${product.name}</h3>
                     <div class="card-text">$${parseFloat(product.price).toFixed(2)}</div>
+                </a>
                     <button class="add-to-cart btn btn-primary btn-lg mt-3" data-product-id="${product.id}">
                         Add to Cart
                     </button>
                 </div>
             </div>`;
         }).join('');
-    
+
         this.track.innerHTML = productsHtml;
         this.updateArrowVisibility();
-    
+
         // Initialize "Add to Cart" buttons
         this.initializeAddToCartButtons();
     }
-    
+
     initializeAddToCartButtons() {
         const addToCartButtons = this.track.querySelectorAll('.add-to-cart');
         addToCartButtons.forEach(button => {
@@ -98,13 +102,12 @@ class ProductSlider {
                 const productName = this.parentElement.querySelector('.card-title').textContent;
                 const productPrice = parseFloat(this.parentElement.querySelector('.card-text').textContent.replace('$', ''));
                 const productImage = this.parentElement.parentElement.querySelector('.product-image').src;
-    
+
                 // Call the cart.js addToCart function
                 addToCart(productId, productName, productPrice, productImage);
             });
         });
     }
-    
 
     slide(direction) {
         if (!this.track) return;

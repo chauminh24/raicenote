@@ -24,9 +24,9 @@ function updateNavigation(isLoggedIn) {
         `;
 
         // Handle redirect after login
-        const storedRedirect = localStorage.getItem('redirect_after_login');
+        const storedRedirect = sessionStorage.getItem('redirect_after_login');
         if (storedRedirect) {
-            localStorage.removeItem('redirect_after_login');
+            sessionStorage.removeItem('redirect_after_login');
             window.location.href = storedRedirect;
         }
     } else {
@@ -41,9 +41,8 @@ function logout() {
     fetch('js/api/logout.php', { method: 'POST' })
         .then(response => {
             if (response.ok) {
-                // Clear any user session and reload the page or redirect
-                localStorage.removeItem('redirect_after_login'); // Cleanup
-                window.location.href = '/themes/index.html'; // Redirect to homepage
+                sessionStorage.removeItem('redirect_after_login');
+                window.location.href = '/themes/index.html';
             } else {
                 console.error("Logout failed.");
             }

@@ -10,6 +10,22 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Get the category from URL
+$activeCategory = isset($_GET['data-category']) ? $_GET['data-category'] : 'all';
+
+// Map URL categories to database categories
+$categoryMapping = [
+    'korean-makgeolli' => 'Korean Rice Wine',
+    'japanese-sake' => 'Japanese Rice Wine',
+    'chinese-rice-wine' => 'Chinese Rice Wine',
+    'collection' => 'Collections',
+    'others' => 'Others',
+    'all' => 'all'
+];
+
+// Convert URL category to database category
+$dbCategory = isset($categoryMapping[$activeCategory]) ? $categoryMapping[$activeCategory] : 'all';
+
 // Fetch unique categories from the products table
 $category_query = "SELECT DISTINCT category FROM products ORDER BY category";
 $category_result = mysqli_query($conn, $category_query);
@@ -18,8 +34,8 @@ $categories = [
     'Korean Rice Wine',
     'Japanese Rice Wine',
     'Chinese Rice Wine',
-    'Collections', // For all bundles
-    'Others'       // For any ungrouped categories
+    'Collections',
+    'Others'
 ];
 $grouped_categories = [];
 
@@ -214,7 +230,7 @@ $max_price = max($prices);
             <span class="toggle-text">Shop</span>
         </button>
 
-        <div class="logo"><a href="index.html"><img src="../uploads/images/Asset 4-8.png"></a></div>
+        <div class="logo"><a href="shop_main.html"><img src="../uploads/images/Asset 4-8.png"></a></div>
 
         <div class="header-right" style="display: flex;">
             <div class="search-container">
@@ -256,7 +272,7 @@ $max_price = max($prices);
     <nav class="nav-menu">
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="events.html">Events</a></li>
+            <li><a href="event.html">Events</a></li>
             <li><a href="shop_main.html">Shop</a></li>
             <li><a href="#contact">Contact</a></li>
             <li>
@@ -273,67 +289,85 @@ $max_price = max($prices);
     </div>
     <div class="container-fluid mt-4">
         <div class="row">
-            <!-- Filter Sidebar (Collapsible on Small Screens) -->
+            <!-- Filter Sidebar -->
             <div class="col-md-3">
                 <div class="filter-collapse">
-                    <button class="btn btn-outline-primary w-100 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterSidebar" aria-expanded="false" aria-controls="filterSidebar">
+                    <button class="btn btn-outline-primary w-100 d-md-none" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#filterSidebar" aria-expanded="false" aria-controls="filterSidebar">
                         Filter Categories <i class="bi bi-funnel"></i>
                     </button>
                     <div class="collapse d-md-block filter-sidebar" id="filterSidebar">
                         <div class="card card-body">
-                            <form id='product_form' action="/submit">
+                            <form id='product_form'>
                                 <h5>Categories</h5>
                                 <div class="list-group">
-                                    <select id="categories-list" class="categories-list" name="categories-list" size="6" style="overflow: hidden;" onchange="updateProductStatus()">
-                                        <option class="list-group-item list-group-item-action" data-category="all" selected>All Categories</option>
+                                    <select id="categories-list" class="categories-list" name="categories-list" size="6"
+                                        style="overflow: hidden;" onchange="updateFilters()">
+                                        <option class="list-group-item list-group-item-action" value="all"
+                                            <?php echo $dbCategory == 'all' ? 'selected' : ''; ?>>
+                                            All Categories
+                                        </option>
                                         <?php foreach ($categories as $display_category): ?>
-                                            <option class="list-group-item list-group-item-action" data-category="<?= htmlspecialchars($display_category, ENT_QUOTES, 'UTF-8') ?>">
-                                                <?= htmlspecialchars($display_category, ENT_QUOTES, 'UTF-8') ?>
+                                            <option class="list-group-item list-group-item-action"
+                                                value="<?php echo array_search($display_category, $categoryMapping) ?:
+                                                            strtolower(str_replace(' ', '-', $display_category)); ?>"
+                                                <?php echo $display_category == $dbCategory ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($display_category, ENT_QUOTES, 'UTF-8'); ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
-
                                 </div>
 
                                 <hr>
 
                                 <h5>Filters</h5>
                                 <div class="accordion" id="filterAccordion">
+                                    <!-- Price Filter -->
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="priceHeader">
-                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#priceFilter">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#priceFilter">
                                                 Price Range
                                             </button>
                                         </h2>
-                                        <div id="priceFilter">
+                                        <div id="priceFilter" class="accordion-collapse collapse show">
                                             <div class="price-slider">
-                                                <input type="range" id="minPrice" name="minPrice" onchange="updateProductStatus()" min="<?php echo $min_price; ?>" max="<?php echo $max_price; ?>" value="<?php echo $min_price; ?>">
-                                                <input type="range" id="maxPrice" name="maxPrice" onchange="updateProductStatus()" min="<?php echo $min_price; ?>" max="<?php echo $max_price; ?>" value="<?php echo $max_price; ?>">
+                                                <input type="range" id="minPrice" name="minPrice"
+                                                    min="<?php echo $min_price; ?>"
+                                                    max="<?php echo $max_price; ?>"
+                                                    value="<?php echo $min_price; ?>"
+                                                    onchange="updateFilters()">
+                                                <input type="range" id="maxPrice" name="maxPrice"
+                                                    min="<?php echo $min_price; ?>"
+                                                    max="<?php echo $max_price; ?>"
+                                                    value="<?php echo $max_price; ?>"
+                                                    onchange="updateFilters()">
                                                 <div class="price-display">
                                                     <span id="minPriceValue"></span> - <span id="maxPriceValue"></span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Add this inside the #filterAccordion div, after the price filter -->
+
+                                    <!-- Alcohol Percentage Filter -->
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="alcoholHeader">
-                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#alcoholFilter">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#alcoholFilter">
                                                 Alcohol Percentage
                                             </button>
                                         </h2>
                                         <div id="alcoholFilter" class="accordion-collapse collapse show">
                                             <div class="accordion-body">
-                                                <select class="alcoholPercentage" id="alcoholPercentage" name="alcoholPercentage" style="width: 100%;" onchange="updateProductStatus()">
-                                                    <option value="" selected>All Alcohol Percentages</option>
+                                                <select class="form-select" id="alcoholPercentage" name="alcoholPercentage"
+                                                    onchange="updateFilters()">
+                                                    <option value="">All Alcohol Percentages</option>
                                                     <?php foreach ($alcohol_percentages as $percentage): ?>
                                                         <option value="<?php echo htmlspecialchars($percentage, ENT_QUOTES, 'UTF-8'); ?>">
                                                             <?php echo htmlspecialchars($percentage, ENT_QUOTES, 'UTF-8'); ?>%
                                                         </option>
                                                     <?php endforeach; ?>
                                                 </select>
-
-
                                             </div>
                                         </div>
                                     </div>
@@ -349,39 +383,55 @@ $max_price = max($prices);
                 <div class="row mt-4" id="product-list">
                     <?php
                     $placeHolderImage = '../uploads/placeholder.jpg';
-                    // Assuming your database connection and query here
-                    $sql = "SELECT product_id, name, price, image_url FROM products";
+
+                    // Build the SQL query based on category
+                    $sql = "SELECT product_id, name, price, image_url, category FROM products";
+                    if ($dbCategory != 'all') {
+                        $sql .= " WHERE category = '" . mysqli_real_escape_string($conn, $dbCategory) . "'";
+                        if ($dbCategory == 'Collections') {
+                            $sql = "SELECT product_id, name, price, image_url, category FROM products WHERE category LIKE '%Bundle%'";
+                        }
+                    }
+
                     $result = $conn->query($sql);
 
-                    if ($result->num_rows > 0) {
+                    if ($result && $result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            echo '<div class="col-sm-6 col-md-4 col-lg-4 mb-4">
-                    <div class="card product-card">
-                        <img 
-                            src="' . htmlspecialchars($row['image_url'], ENT_QUOTES, 'UTF-8') . '"
-                            alt="' . htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8') . '"
-                            class="card-img-top product-image"
-                            onerror="this.onerror=null; this.src=\'' . htmlspecialchars($placeHolderImage, ENT_QUOTES, 'UTF-8') . '\'; this.className+=\' placeholder\'"
-                        >
-                        <div class="card-body">
-                            <h5 class="card-title">' . htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8') . '</h5>
-                            <p class="card-text">$' . number_format((float)$row['price'], 2, '.', '') . '</p>
-                            <button class="btn btn-primary add-to-cart" data-product-id="' . htmlspecialchars($row['product_id'], ENT_QUOTES, 'UTF-8') . '">Add to Cart</button>
-                        </div>
-                    </div>
-                  </div>';
+                            $productId = htmlspecialchars($row['product_id'], ENT_QUOTES, 'UTF-8');
+                            $productName = htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8');
+                            $productPrice = number_format((float)$row['price'], 2, '.', '');
+                            $productImage = htmlspecialchars($row['image_url'], ENT_QUOTES, 'UTF-8') ?: $placeHolderImage;
+
+                            echo "
+                            <div class='col-sm-6 col-md-4 col-lg-4 mb-4'>
+                                <div class='card product-card'>
+                                    <a href='product.php?product_id={$productId}'>
+                                        <img 
+                                            src='{$productImage}'
+                                            alt='{$productName}'
+                                            class='card-img-top product-image'
+                                            onerror='this.onerror=null; this.src=\"{$placeHolderImage}\"; this.className+=\" placeholder\"'
+                                        >
+                                    </a>
+                                    <div class='card-body'>
+                                        <h5 class='card-title'>{$productName}</h5>
+                                        <p class='card-text'>$ {$productPrice}</p>
+                                        <button class='btn btn-primary add-to-cart' data-product-id='{$productId}'>Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>";
                         }
                     } else {
-                        echo "No products found.";
+                        echo "<p class='text-center'>No products found in this category. Please check back later!</p>";
                     }
 
                     $conn->close();
                     ?>
                 </div>
-
             </div>
         </div>
     </div>
+
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
             <h4>Your Cart</h4>
@@ -395,7 +445,7 @@ $max_price = max($prices);
                 <span>Total:</span>
                 <span id="cartTotal">€0.00</span>
             </div>
-            <button class="btn btn-primary checkout-btn" id="checkoutButton" onclick="isLogIn()">Checkout</button>
+            <button class="btn btn-primary checkout-btn" id="checkoutButton" onclick="checkAuthStatusForCheckout()">Checkout</button>
         </div>
     </div>
 </body>
@@ -456,67 +506,59 @@ $max_price = max($prices);
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add click event listener to the filter toggle button
-        const filterToggleBtn = document.querySelector('[data-bs-target="#filterSidebar"]');
-        const filterSidebar = document.getElementById('filterSidebar');
+    let currentFilters = {
+        category: '<?php echo $activeCategory; ?>',
+        minPrice: <?php echo $min_price; ?>,
+        maxPrice: <?php echo $max_price; ?>,
+        alcoholPercentage: ''
+    };
 
-        if (filterToggleBtn && filterSidebar) {
-            filterToggleBtn.addEventListener('click', function() {
-                filterSidebar.classList.toggle('show');
-            });
-        }
-
-        const minPriceSlider = document.getElementById('minPrice');
-        const maxPriceSlider = document.getElementById('maxPrice');
-        const minPriceValue = document.getElementById('minPriceValue');
-        const maxPriceValue = document.getElementById('maxPriceValue');
-
-        const updatePriceDisplay = () => {
-            const minPrice = Math.min(parseInt(minPriceSlider.value), parseInt(maxPriceSlider.value));
-            const maxPrice = Math.max(parseInt(minPriceSlider.value), parseInt(maxPriceSlider.value));
-            minPriceSlider.value = minPrice;
-            maxPriceSlider.value = maxPrice;
-            minPriceValue.textContent = `€${minPrice}`;
-            maxPriceValue.textContent = `€${maxPrice}`;
-        };
-
-        minPriceSlider.addEventListener('input', updatePriceDisplay);
-        maxPriceSlider.addEventListener('input', updatePriceDisplay);
-
-        // Initialize display
-        updatePriceDisplay();
-    });
-
-    function updateProductStatus() {
+    function updateFilters() {
         const formData = new FormData(document.getElementById('product_form'));
 
+        // Update current filters
+        currentFilters = {
+            category: document.getElementById('categories-list').value,
+            minPrice: document.getElementById('minPrice').value,
+            maxPrice: document.getElementById('maxPrice').value,
+            alcoholPercentage: document.getElementById('alcoholPercentage').value
+        };
+
+        // AJAX call to filter.php
         fetch('js/api/filter.php', {
                 method: 'POST',
-                body: formData,
+                body: formData
             })
-            .then(response => {
-                if (response.ok) {
-                    return response.text();
-                }
-                throw new Error('Network response was not ok');
-            })
+            .then(response => response.text())
             .then(data => {
                 document.getElementById('product-list').innerHTML = data;
+                updatePriceDisplay();
                 attachAddToCartListeners();
             })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+            .catch(error => console.error('Error:', error));
 
+        // Update URL without page reload
+        const params = new URLSearchParams();
+        params.set('data-category', currentFilters.category);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, '', newUrl);
     }
-    document.addEventListener('click', function(event) {
-    if (event.target.classList.contains('add-to-cart')) {
-        console.log('Add to Cart button clicked');
-        console.log('Product ID:', event.target.getAttribute('data-product-id'));
-        // Add any additional logging you want
+
+    function updatePriceDisplay() {
+        const minPrice = document.getElementById('minPrice');
+        const maxPrice = document.getElementById('maxPrice');
+        document.getElementById('minPriceValue').textContent = `$${minPrice.value}`;
+        document.getElementById('maxPriceValue').textContent = `$${maxPrice.value}`;
     }
-});
+
+    // Initialize price display and filters on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updatePriceDisplay();
+        updateFilters();
+    });
 </script>
 <script src="js/cart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </html>

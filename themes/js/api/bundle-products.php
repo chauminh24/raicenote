@@ -12,7 +12,7 @@ try {
     
     
     
-    $query = "SELECT product_id, name, price, image_url, created_at FROM products WHERE is_bundle = true ORDER BY  name";
+    $query = "SELECT product_id as id, name, price, image_url, created_at FROM products WHERE is_bundle = true ORDER BY  name";
     $stmt = $db->prepare($query);
     $stmt->execute();
     

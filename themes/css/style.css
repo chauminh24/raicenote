@@ -635,3 +635,54 @@ a {
     border-radius: 0;
     height: 5em;
 }
+#loginCheckoutModal .modal-content {
+    border-radius: 0;
+    border: none;
+}
+
+#loginCheckoutModal .modal-header {
+    border-bottom: none;
+    padding: 2rem 2rem 1rem;
+}
+
+#loginCheckoutModal .modal-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+}
+
+#loginCheckoutModal .modal-body {
+    padding: 1rem 2rem;
+}
+
+#loginCheckoutModal .modal-footer {
+    border-top: none;
+    padding: 1rem 2rem 2rem;
+}
+
+#loginCheckoutModal .btn {
+    border-radius: 0;
+    padding: 0.5rem 2rem;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+#loginCheckoutModal .btn-primary {
+    background-color: black;
+    border-color: black;
+}
+
+#loginCheckoutModal .btn-primary:hover {
+    background-color: #333;
+    border-color: #333;
+}
+
+#loginCheckoutModal .btn-secondary {
+    background-color: transparent;
+    color: black;
+    border: 1px solid black;
+}
+
+#loginCheckoutModal .btn-secondary:hover {
+    background-color: #f8f9fa;
+    color: black;
+}

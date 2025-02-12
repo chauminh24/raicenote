@@ -2,11 +2,16 @@
 session_start();
 
 if (isset($_SESSION['user_id'])) {
-    // Priority: 1. GET parameter 2. Stored redirect 3. Default homepage
-    $redirectTo = isset($_GET['redirect_to']) ? $_GET['redirect_to'] : 
-                  (isset($_COOKIE['redirect_after_login']) ? $_COOKIE['redirect_after_login'] : 'index.html');
-    
-    header("Location: " . $redirectTo);
+    // Check for redirect URL in session storage via JavaScript
+    echo "<script>
+        var redirectUrl = sessionStorage.getItem('redirect_after_login');
+        if (redirectUrl) {
+            sessionStorage.removeItem('redirect_after_login');
+            window.location.href = redirectUrl;
+        } else {
+            window.location.href = 'index.html';
+        }
+    </script>";
     exit();
 }
 
@@ -42,17 +47,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (password_verify($password, $user['password_hash'])) {
                 // Set session variables
                 $_SESSION['user_id'] = $user['user_id'];
-
-                // After successful login, check if there's a redirect_to URL
-                if (isset($_GET['redirect_to'])) {
-                    $redirectTo = $_GET['redirect_to'];
-                    header("Location: " . $redirectTo);  // Redirect to the intended page (e.g., checkout)
-                    exit();
-                } else {
-                    // Default redirect to homepage
-                    header("Location: index.html");
-                    exit();
-                }
+                
+                // After successful login, check sessionStorage for redirect
+                echo "<script>
+                    var redirectUrl = sessionStorage.getItem('redirect_after_login');
+                    if (redirectUrl) {
+                        sessionStorage.removeItem('redirect_after_login');
+                        window.location.href = redirectUrl;
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                </script>";
+                exit();
             } else {
                 $error = "Invalid password.";
             }
@@ -66,8 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
-
-
 
 
 <!DOCTYPE html>

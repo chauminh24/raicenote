@@ -116,6 +116,11 @@
             /* Default order */
         }
 
+        .btn-outline-dark {
+            color: white;
+            border-color: white;
+        }
+
         /* On large devices (lg and up), switch the order */
         @media (min-width: 992px) {
             .switch-container .col-md-6:first-child {
@@ -167,9 +172,9 @@
     <nav class="nav-menu">
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="events.html">Events</a></li>
+            <li><a href="event.html">Events</a></li>
             <li><a href="shop_main.html">Shop</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="contact">Contact</a></li>
             <li>
                 <div class="auth-buttons">
                     <!-- This div's content will be updated by JavaScript -->
@@ -192,20 +197,24 @@
         <h2 class="text-center bold">Our Services</h2>
         <div class="row">
             <div class="col-6">
-                <div class="card"
-                    style="min-height: 15vw; background-image: url('../uploads/images/shops.jpg'); background-size: cover; background-position: center; color: white; ">
-                    <div class="card-body d-flex justify-content-center align-items-center">
-                        <a href="shop_main.html"><h1 style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); color: white;">Shop</h1></a>
+                <a href="shop_main.html">
+                    <div class="card"
+                        style="min-height: 15vw; background-image: url('../uploads/images/shops.jpg'); background-size: cover; background-position: center; color: white; ">
+                        <div class="card-body d-flex justify-content-center align-items-center">
+                            <h1 style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); color: white;">Shop</h1>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             <div class="col-6">
-                <div class="card"
-                    style="min-height: 15vw; width: auto; background-image: url('../uploads/images/events.jpg'); background-size: cover; background-position: center; color: white;">
-                    <div class="card-body d-flex justify-content-center align-items-center">
-                        <h1 style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); color: white">Event</h1>
+                <a href="event.html">
+                    <div class="card"
+                        style="min-height: 15vw; width: auto; background-image: url('../uploads/images/events.jpg'); background-size: cover; background-position: center; color: white;">
+                        <div class="card-body d-flex justify-content-center align-items-center">
+                            <h1 style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); color: white">Event</h1>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </div>
@@ -218,7 +227,7 @@
                 <div class="col-md-6">
                     <p class="text-uppercase text-primary mt-4">SHOP</p>
                     <h2 class="mb-4">Traditional Korean Makgeolli</h2>
-                    <a href="#" class="link">
+                    <a href="product.php?product_id=1" class="link">
                         <span class="mask">
                             <div class="link-container">
                                 <span class="link-title1 title">SHOP NOW</span>
@@ -275,7 +284,7 @@
         <img alt="A stack of sake barrels in Tokyo, Japan." class="frxWA yOwym  hsDdd DXqUA bmjsw "
             data-testid="prism-image" draggable="false" fetchpriority="high" loading="eager"
             src="https://i.natgeofe.com/n/78de9317-5ed8-40cc-b5c9-fb55c1407db4/Sakelabels107879057.jpg"
-            style="object-position:center center;width: 100%; height: 25vw; object-fit: cover;"/>
+            style="object-position:center center;width: 100%; height: 25vw; object-fit: cover;" />
     </div>
     <section class="product-section">
         <div class="container">
@@ -286,7 +295,7 @@
                 <div class="col-md-6">
                     <p class="text-uppercase text-primary mt-4">SHOP</p>
                     <h2 class="mb-4">Millet Wine</h2>
-                    <a href="#" class="link">
+                    <a href="product.php?product_id=6" class="link">
                         <span class="mask">
                             <div class="link-container">
                                 <span class="link-title1 title">SHOP NOW</span>
@@ -340,7 +349,7 @@
         </div>
     </section>
 
-    
+
 </body>
 <!-- Footer Section -->
 <footer class="text-light py-5" style="background-color: black;">
@@ -368,27 +377,30 @@
             <div class="col-6 col-lg-4 ">
                 <h5 class="text-uppercase mb-4">Our Location</h5>
                 <p class="text-light" style="font-size: smaller;">123 Main Street, Suite 100, City, Country</p>
-                <a href="https://www.google.com/maps" target="_blank" class="btn btn-light btn-sm mt-3">GET DIRECTIONS &rarr;</a>
+                <a href="https://www.google.com/maps" target="_blank" class="btn btn-light btn-sm mt-3">GET DIRECTIONS
+                    &rarr;</a>
                 <h5 class="mt-3"><a href="#" class="text-light">Social Media</h5>
                 <div class="social-media-icons mt-3">
                     <a href="#" class="text-light me-3"><i class="bi bi-facebook" style="font-size: 20px;"></i></a>
                     <a href="#" class="text-light me-3"><i class="bi bi-instagram" style="font-size: 20px;"></i></a>
                     <a href="#" class="text-light me-3"><i class="bi bi-twitter" style="font-size: 20px;"></i></a>
                 </div>
-                
+
             </div>
 
             <!-- Column 3: Newsletter Subscription -->
             <div class="col-lg-5 mt-5">
                 <h5 class="text-uppercase">want more of raicé?</h5>
-                <p class="mb-4" style="font-size: smaller;">Get our email. Letters from our brewers, new products, coming-up events, workshop, and more. Not too often - just enough</p>
+                <p class="mb-4" style="font-size: smaller;">Get our email. Letters from our brewers, new products,
+                    coming-up events, workshop, and more. Not too often - just enough</p>
                 <form action="#" method="post">
                     <div class="input-group" style="height: 3em;">
-                        <input type="email" class="form-control rounded-0 custom-input" placeholder="EMAIL" aria-label="Email" required>
+                        <input type="email" class="form-control rounded-0 custom-input" placeholder="EMAIL"
+                            aria-label="Email" required>
                         <button class="btn custom-button" type="submit">SIGN UP</button>
                     </div>
                 </form>
-                
+
             </div>
 
         </div>

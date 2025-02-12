@@ -129,7 +129,7 @@
     <nav class="nav-menu">
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="events.html">Events</a></li>
+            <li><a href="event.html">Events</a></li>
             <li><a href="shop_main.html">Shop</a></li>
             <li><a href="#contact">Contact</a></li>
             <li>
@@ -215,7 +215,7 @@
             <div class="row g-4">
                 <!-- Korean Makgeolli -->
                 <div class="col-md-6">
-                    <a href="categories/korean-makgeolli" class="text-decoration-none">
+                    <a href="shop_category.php?data-category=korean-makgeolli" class="text-decoration-none">
                         <div class="category-card">
                             <img src="../uploads/images/placeholder-makgeolli.jpg" alt="Korean Rice Wine"
                                 class="category-image">
@@ -230,7 +230,7 @@
 
                 <!-- Japanese Sake -->
                 <div class="col-md-6">
-                    <a href="categories/japanese-sake" class="text-decoration-none">
+                    <a href="shop_category.php?data-category=japanese-sake" class="text-decoration-none">
                         <div class="category-card">
                             <img src="../uploads/images/placeholder-sake.jpg" alt="Japanese Rice Wine"
                                 class="category-image">
@@ -245,7 +245,7 @@
 
                 <!-- Chinese Rice Wine -->
                 <div class="col-md-4">
-                    <a href="categories/chinese-rice-wine" class="text-decoration-none">
+                    <a href="shop_category.php?data-category=chinese-rice-wine" class="text-decoration-none">
                         <div class="category-card">
                             <img src="../uploads/images/placeholder-rice-wine.jpg" alt="Chinese Rice Wine"
                                 class="category-image">
@@ -260,7 +260,7 @@
 
                 <!-- Others -->
                 <div class="col-md-4">
-                    <a href="categories/others" class="text-decoration-none">
+                    <a href="shop_category.php?data-category=others" class="text-decoration-none">
                         <div class="category-card">
                             <img src="../uploads/images/placeholder-others.jpg" alt="Other Beverages"
                                 class="category-image">
@@ -275,7 +275,7 @@
 
                 <!-- Seasonal Collection -->
                 <div class="col-md-4">
-                    <a href="categories/seasonal-collection" class="text-decoration-none">
+                    <a href="shop_category.php?data-category=collection" class="text-decoration-none">
                         <div class="category-card">
                             <img src="../uploads/images/placeholder-seasonal.jpg" alt="Seasonal Collection"
                                 class="category-image">
@@ -290,7 +290,7 @@
             </div>
             <div class="row mt-4">
                 <div class="col-12 text-center">
-                    <a href="shop_category.php?category" class="btn btn-outline-primary btn-lg">
+                    <a href="shop_category.php?data-category=all" class="btn btn-outline-primary btn-lg">
                         View All Categories
                     </a>
                 </div>
@@ -311,7 +311,7 @@
                 <span>Total:</span>
                 <span id="cartTotal">$0.00</span>
             </div>
-            <button class="btn btn-primary checkout-btn" id="checkoutButton" onclick="isLogIn()">Checkout</a></button>
+            <button class="btn btn-primary checkout-btn" id="checkoutButton" onclick="checkAuthStatusForCheckout()">Checkout</button>
         </div>
     </div>
 </body>
@@ -372,6 +372,9 @@
 <script src="js/product-slider.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/cart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
 
 
