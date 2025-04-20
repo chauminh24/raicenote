@@ -416,7 +416,7 @@ $max_price = max($prices);
                                     <div class='card-body'>
                                         <h5 class='card-title'>{$productName}</h5>
                                         <p class='card-text'>$ {$productPrice}</p>
-                                        <button class='btn btn-primary add-to-cart' data-product-id='{$productId}'>Add to Cart</button>
+                                        <button class='btn btn-primary add-to-cart addToCart' data-product-id='{$productId}'>Add to Cart</button>
                                     </div>
                                 </div>
                             </div>";
