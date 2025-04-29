@@ -1,4 +1,7 @@
 <?php
+header('Content-Type: application/json');
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING); // Suppress warnings and notices
+ob_start(); // Start output buffering
 // Database connection settings
 $host = 'localhost';
 $dbname = 'website_raicenote';
@@ -6,7 +9,8 @@ $username = 'root';
 $password = '';
 
 // Response function
-function sendResponse($success, $message = '', $data = null) {
+function sendResponse($success, $message = '', $data = null)
+{
     header('Content-Type: application/json');
     echo json_encode([
         'success' => $success,
@@ -56,9 +60,9 @@ try {
         ':full_name' => $data['fullName'],
         ':total_amount' => $data['totalAmount'],
         ':shipping_address' => implode(', ', [
-            $data['address'], 
-            $data['city'], 
-            $data['postalCode'], 
+            $data['address'],
+            $data['city'],
+            $data['postalCode'],
             $data['country']
         ]),
         ':tracking_number' => $data['trackingNumber']
@@ -85,6 +89,34 @@ try {
     );
 
     foreach ($data['items'] as $item) {
+        // Lock the product row for update
+        $productStmt = $pdo->prepare(
+            "SELECT stock_quantity FROM products WHERE product_id = :product_id FOR UPDATE"
+        );
+        $productStmt->execute([
+            ':product_id' => $item['productId']
+        ]);
+        $product = $productStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$product) {
+            throw new Exception("Product ID not found: {$item['productId']}");
+        }
+
+        if ($product['stock_quantity'] < $item['productQuantity']) {
+            throw new Exception("Insufficient stock for product ID: {$item['productId']}");
+        }
+
+        // Update product stock
+        $stockUpdateStmt = $pdo->prepare(
+            "UPDATE products 
+             SET stock_quantity = stock_quantity - :quantity 
+             WHERE product_id = :product_id"
+        );
+        $stockUpdateStmt->execute([
+            ':product_id' => $item['productId'],
+            ':quantity' => $item['productQuantity']
+        ]);
+
         // Insert order item
         $orderItemStmt->execute([
             ':order_id' => $orderId,
@@ -93,18 +125,8 @@ try {
             ':unit_price' => $item['productPrice'],
             ':subtotal' => $item['productPrice'] * $item['productQuantity']
         ]);
-
-        // Update product stock
-        $stockUpdateStmt->execute([
-            ':product_id' => $item['productId'],
-            ':quantity' => $item['productQuantity']
-        ]);
-
-        // Check if stock update failed (insufficient stock)
-        if ($stockUpdateStmt->rowCount() == 0) {
-            throw new Exception("Insufficient stock for product ID: {$item['productId']}");
-        }
     }
+
 
     // Commit transaction
     $pdo->commit();
@@ -114,7 +136,6 @@ try {
         'orderId' => $orderId,
         'trackingNumber' => $data['trackingNumber']
     ]);
-
 } catch (Exception $e) {
     // Rollback transaction on error
     $pdo->rollBack();
