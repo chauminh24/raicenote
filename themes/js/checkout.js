@@ -34,8 +34,58 @@ async function calculateTotalAmount() {
 }
 
 // Function to place an order
+// Function to validate the checkout form
+function validateCheckoutForm() {
+    const fullName = document.getElementById('fullName').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const postalCode = document.getElementById('postalCode').value.trim();
+    const country = document.getElementById('country').value.trim();
+
+    // Regular expression for postal code validation (example: alphanumeric, 5-10 characters)
+    const postalCodeRegex = /^[A-Za-z0-9\s\-]{5,10}$/;
+
+    if (!fullName) {
+        alert('Full Name is required.');
+        return false;
+    }
+
+    if (!address) {
+        alert('Address is required.');
+        return false;
+    }
+
+    if (!city) {
+        alert('City is required.');
+        return false;
+    }
+
+    if (!postalCode) {
+        alert('Postal Code is required.');
+        return false;
+    }
+
+    if (!postalCodeRegex.test(postalCode)) {
+        alert('Please enter a valid Postal Code (5-10 alphanumeric characters).');
+        return false;
+    }
+
+    if (!country) {
+        alert('Country is required.');
+        return false;
+    }
+
+    return true;
+}
+
+// Update the placeOrder function to include validation
 async function placeOrder(event) {
     event.preventDefault();
+
+    // Validate the form before proceeding
+    if (!validateCheckoutForm()) {
+        return;
+    }
 
     // Get form input values
     const fullName = document.getElementById('fullName').value.trim();
@@ -43,12 +93,6 @@ async function placeOrder(event) {
     const city = document.getElementById('city').value.trim();
     const postalCode = document.getElementById('postalCode').value.trim();
     const country = document.getElementById('country').value.trim();
-
-    // Basic validation
-    if (!fullName || !address || !city || !postalCode || !country) {
-        alert('Please fill in all shipping information fields.');
-        return;
-    }
 
     const cart = await fetchCart();
     if (cart.length === 0) {
@@ -83,7 +127,7 @@ async function placeOrder(event) {
         const result = await response.json();
 
         if (result.success) {
-            // Clear cart and any stored redirects before going to confirmation
+            // Clear cart and redirect to confirmation page
             await clearCart();
             sessionStorage.removeItem('redirect_after_login');
             window.location.href = '/themes/order-confirmation.html?tracking=' + trackingNumber;

@@ -71,6 +71,12 @@ while ($row = mysqli_fetch_assoc($price_result)) {
 $min_price = min($prices);
 $max_price = max($prices);
 
+/ Function to set a cookie for product images
+function setProductImageCookie($productId, $imageUrl) {
+    $cookieName = "product_image_" . $productId;
+    setcookie($cookieName, $imageUrl, time() + (86400 * 30), "/"); // Cookie expires in 30 days
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -380,54 +386,57 @@ $max_price = max($prices);
 
             <!-- Main Product Grid -->
             <div class="col-md-9">
-                <div class="row mt-4" id="product-list">
-                    <?php
-                    $placeHolderImage = '../uploads/placeholder.jpg';
+            <div class="row mt-4" id="product-list">
+                <?php
+                $placeHolderImage = '../uploads/placeholder.jpg';
 
-                    // Build the SQL query based on category
-                    $sql = "SELECT product_id, name, price, image_url, category FROM products";
-                    if ($dbCategory != 'all') {
-                        $sql .= " WHERE category = '" . mysqli_real_escape_string($conn, $dbCategory) . "'";
-                        if ($dbCategory == 'Collections') {
-                            $sql = "SELECT product_id, name, price, image_url, category FROM products WHERE category LIKE '%Bundle%'";
-                        }
+                // Build the SQL query based on category
+                $sql = "SELECT product_id, name, price, image_url, category FROM products";
+                if ($dbCategory != 'all') {
+                    $sql .= " WHERE category = '" . mysqli_real_escape_string($conn, $dbCategory) . "'";
+                    if ($dbCategory == 'Collections') {
+                        $sql = "SELECT product_id, name, price, image_url, category FROM products WHERE category LIKE '%Bundle%'";
                     }
+                }
 
-                    $result = $conn->query($sql);
+                $result = $conn->query($sql);
 
-                    if ($result && $result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            $productId = htmlspecialchars($row['product_id'], ENT_QUOTES, 'UTF-8');
-                            $productName = htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8');
-                            $productPrice = number_format((float)$row['price'], 2, '.', '');
-                            $productImage = htmlspecialchars($row['image_url'], ENT_QUOTES, 'UTF-8') ?: $placeHolderImage;
+                if ($result && $result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $productId = htmlspecialchars($row['product_id'], ENT_QUOTES, 'UTF-8');
+                        $productName = htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8');
+                        $productPrice = number_format((float)$row['price'], 2, '.', '');
+                        $productImage = htmlspecialchars($row['image_url'], ENT_QUOTES, 'UTF-8') ?: $placeHolderImage;
 
-                            echo "
-                            <div class='col-sm-6 col-md-4 col-lg-4 mb-4'>
-                                <div class='card product-card'>
-                                    <a href='product.php?product_id={$productId}'>
-                                        <img 
-                                            src='{$productImage}'
-                                            alt='{$productName}'
-                                            class='card-img-top product-image'
-                                            onerror='this.onerror=null; this.src=\"{$placeHolderImage}\"; this.className+=\" placeholder\"'
-                                        >
-                                    </a>
-                                    <div class='card-body'>
-                                        <h5 class='card-title'>{$productName}</h5>
-                                        <p class='card-text'>$ {$productPrice}</p>
-                                        <button class='btn btn-primary add-to-cart addToCart' data-product-id='{$productId}'>Add to Cart</button>
-                                    </div>
+                        // Set a cookie for the product image
+                        setProductImageCookie($productId, $productImage);
+
+                        echo "
+                        <div class='col-sm-6 col-md-4 col-lg-4 mb-4'>
+                            <div class='card product-card'>
+                                <a href='product.php?product_id={$productId}'>
+                                    <img 
+                                        src='{$productImage}'
+                                        alt='{$productName}'
+                                        class='card-img-top product-image'
+                                        onerror='this.onerror=null; this.src=\"{$placeHolderImage}\"; this.className+=\" placeholder\"'
+                                    >
+                                </a>
+                                <div class='card-body'>
+                                    <h5 class='card-title'>{$productName}</h5>
+                                    <p class='card-text'>$ {$productPrice}</p>
+                                    <button class='btn btn-primary add-to-cart addToCart' data-product-id='{$productId}'>Add to Cart</button>
                                 </div>
-                            </div>";
-                        }
-                    } else {
-                        echo "<p class='text-center'>No products found in this category. Please check back later!</p>";
+                            </div>
+                        </div>";
                     }
+                } else {
+                    echo "<p class='text-center'>No products found in this category. Please check back later!</p>";
+                }
 
-                    $conn->close();
-                    ?>
-                </div>
+                $conn->close();
+                ?>
+            </div>
             </div>
         </div>
     </div>
